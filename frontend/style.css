@@ -1,0 +1,130 @@
+/* ---------- General Page Style ---------- */
+body {
+  background: linear-gradient(135deg, #e3f2fd, #ffffff);
+  font-family: "Poppins", sans-serif;
+  color: #212529;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* hide unwanted side scroll */
+}
+
+/* ---------- Title ---------- */
+h1 {
+  font-weight: 700;
+  color: #0d6efd; /* Bootstrap primary blue */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- Form Card ---------- */
+.card {
+  border: none;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+/* ---------- Inputs & Buttons ---------- */
+#studentForm input,
+#studentForm select {
+  border-radius: 10px;
+  border: 1px solid #ced4da;
+}
+
+#studentForm input:focus,
+#studentForm select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 5px rgba(13, 110, 253, 0.4);
+}
+
+button.btn {
+  border-radius: 10px;
+  transition: 0.2s ease;
+}
+
+button.btn:hover {
+  transform: scale(1.05);
+}
+
+/* ---------- Table ---------- */
+table {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+thead {
+  background-color: #0d6efd;
+  color: white;
+  text-align: center;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f1f8ff;
+}
+
+tbody tr:hover {
+  background-color: #dbeafe;
+  transition: 0.2s ease-in;
+}
+
+tbody td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* ---------- Delete Button ---------- */
+.btn-danger {
+  background-color: #dc3545;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #bb2d3b;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .card {
+    padding: 1rem;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+}
+
+/*  Fix horizontal overflow and centering */
+body {
+  
+}
+
+/* Ensure table container stays responsive */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Make the table fit nicely in the page */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  margin: 0 auto;
+}
+
+/* Keep the whole layout centered */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
