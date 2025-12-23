@@ -103,11 +103,6 @@ tbody td {
   }
 }
 
-/*  Fix horizontal overflow and centering */
-body {
-  
-}
-
 /* Ensure table container stays responsive */
 .table-container {
   width: 100%;

@@ -1,14 +1,24 @@
+require("dotenv").config();
+
 const express = require("express");
 const fs = require("fs");
 const cors = require("cors");
-const bodyParser = require("body-parser");
+const { Groq } = require("groq-sdk");
+
+//console.log("GROQ KEY:", process.env.GROQ_API_KEY);
 
 const app = express();
 const PORT = 3000;
+
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
+
 const DATA_FILE = "./students.json"; 
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
+
 
 /* ---------------------------
    Utility Functions
@@ -73,12 +83,12 @@ app.post("/students", (req, res) => {
   res.json({ message: " Student added successfully!", student: newStudent });
 });
 
-//  DELETE /students/:id (optional)
+//  DELETE /students/:id 
 app.delete("/students/:id", (req, res) => {
   let students = readStudents();
   const { id } = req.params;
   const originalLength = students.length;
-  students = students.filter((s) => s.id != id);
+  students = students.filter((s) => String(s.id) !== id);
 
   if (students.length === originalLength) {
     return res.status(404).json({ message: "Student not found!" });
@@ -94,3 +104,90 @@ app.delete("/students/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(` Server running at http://localhost:${PORT}`);
 });
+
+// ===============================
+// LLM /ask-llm ROUTE
+// ===============================
+
+app.post("/ask-llm", async (req, res) => {
+  try {
+    const { question } = req.body;
+    const students = readStudents();
+    const q = question.toLowerCase();
+
+    // ===============================
+    // PRE-COMPUTED DATA (CUSTOM DATA)
+    // ===============================
+    const total = students.length;
+    const male = students.filter(s => s.gender.toLowerCase() === "male").length;
+    const female = students.filter(s => s.gender.toLowerCase() === "female").length;
+
+    const programs = [...new Set(students.map(s => s.program))];
+    const years = [...new Set(students.map(s => s.yearLevel))];
+
+    // ===============================
+    // RULE-BASED ANSWERS (NO LLM ❌)
+    // ===============================
+    if (q.includes("female")) {
+      return res.json({ answer: `There are ${female} female students enrolled.` });
+    }
+
+    if (q.includes("male")) {
+      return res.json({ answer: `There are ${male} male students enrolled.` });
+    }
+
+    if (q.includes("total")) {
+      return res.json({ answer: `There are ${total} students in total.` });
+    }
+
+    if (q.includes("program")) {
+      return res.json({ answer: `Available programs are: ${programs.join(", ")}.` });
+    }
+
+    if (q.includes("year")) {
+      return res.json({ answer: `Year levels present are: ${years.join(", ")}.` });
+    }
+
+    // ===============================
+    // SMALL SUMMARY ONLY (LLM SAFE)
+    // ===============================
+    const summary = `
+    Total students: ${total}
+    Male: ${male}
+    Female: ${female}
+    Programs: ${programs.join(", ")}
+    Year Levels: ${years.join(", ")}
+    `;
+
+    // ===============================
+    // LLM ONLY FOR COMPLEX QUESTIONS
+    // ===============================
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.1-8b-instant",
+      messages: [
+        {
+          role: "system",
+          content: "You answer questions strictly based on the provided student summary."
+        },
+        {
+          role: "user",
+          content: `Question: ${question}\n\nStudent Summary:\n${summary}`
+        }
+      ],
+      max_tokens: 120
+    });
+
+    res.json({
+      answer: completion.choices[0].message.content
+    });
+
+  } catch (err) {
+    console.error("LLM ERROR:", err.message);
+
+    res.json({
+      answer: "AI service is currently unavailable. Showing system-based result instead."
+    });
+  }
+});
+
+

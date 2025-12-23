@@ -19,7 +19,7 @@ async function loadStudents(filters = {}) {
   const students = await res.json();
 
   tableBody.innerHTML = "";
-  students.forEach((s) => {
+  students.slice(0, 50).forEach((s) => {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${s.studentID}</td>
