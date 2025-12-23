@@ -16,4 +16,4 @@ FEATURES:
 - Add, delete, search, and filter students
 - Student data stored in JSON file
 - AI chatbot analyzes student data using a local LLM (Ollama)
-- No API keys required
+- Groq API keys 
